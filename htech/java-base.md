@@ -1,5 +1,52 @@
 # java基础
+## JVM vs JDK vs JRE
+    .class->机器码。在这一步 JVM 类加载器首先加载字节码文件，然后通过解释器逐行解释执行，这种方式的执行速度会相对比较慢。而且，有些方法和代码块是经常需要被调用的(也就是所谓的热点代码)，所以后面引进了 JIT 编译器，而 JIT 属于运行时编译。当 JIT 编译器完成第一次编译后，其会将字节码对应的机器码保存下来，下次可以直接使用。而我们知道，机器码的运行效率肯定是高于 Java 解释器的。这也解释了我们为什么经常会说 Java 是编译与解释共存的语言。
+    HotSpot 采用了惰性评估(Lazy Evaluation)的做法，根据二八定律，消耗大部分系统资源的只有那一小部分的代码（热点代码），而这也就是 JIT 所需要编译的部分。JVM 会根据代码每次被执行的情况收集信息并相应地做出一些优化，因此执行的次数越多，它的速度就越快。JDK 9 引入了一种新的编译模式 AOT(Ahead of Time Compilation)，它是直接将字节码编译成机器码，这样就避免了 JIT 预热等各方面的开销。JDK 支持分层编译和 AOT 协作使用。但是 ，AOT 编译器的编译质量是肯定比不上 JIT 编译器的。
+ ## java泛型擦除
+ Java 在编译期间，所有的泛型信息都会被擦掉，这也就是通常所说类型擦除
+ 常用的通配符为： T，E，K，V，？
+    ？ 表示不确定的 java 类型
+    T (type) 表示具体的一个 java 类型
+    K V (key value) 分别代表 java 键值中的 Key Value
+    E (element) 代表 Element
+## equals&hashcode
+    为什么重写 equals 时必须重写 hashCode 方法？
 
+    如果两个对象相等，则 hashcode 一定也是相同的。两个对象相等,对两个对象分别调用 equals 方法都返回 true。但是，两个对象有相同的 hashcode 值，它们也不一定是相等的 。因此，equals 方法被覆盖过，则 hashCode 方法也必须被覆盖。
+
+    hashCode()的默认行为是对堆上的对象产生独特值。如果没有重写 hashCode()，则该 class 的两个对象无论如何都不会相等（即使这两个对象指向相同的数据）
+## 拆箱装箱
+    装箱其实就是调用了 包装类的valueOf()方法，拆箱其实就是调用了 xxxValue()方法。
+    因此，
+    Integer i = 10 等价于 Integer i = Integer.valueOf(10)
+    int n = i 等价于 int n = i.intValue();
+## 基本类型常量池
+    Java 基本类型的包装类的大部分都实现了常量池技术。Byte,Short,Integer,Long 这 4 种包装类默认创建了数值 [-128，127] 的相应类型的缓存数据，Character 创建了数值在[0,127]范围的缓存数据，Boolean 直接返回 True Or False。
+## pass by value
+    ```java
+    void testString(String lhs){
+        lhs = "world";
+    }
+
+    @Test
+    void testString1(){
+        String string = "hello";
+        testString(string);
+        System.out.println(string);
+    }
+## String
+    在 Java 9 之后，String 、StringBuilder 与 StringBuffer 的实现改用 byte 数组存储字符串 
+
+## 序列化
+    transient 关键字的作用是：阻止实例中那些用此关键字修饰的的变量序列化；当对象被反序列化时，被 transient 修饰的变量值不会被持久化和恢复。
+
+    关于 transient 还有几点注意：
+
+    transient 只能修饰变量，不能修饰类和方法。
+    transient 修饰的变量，在反序列化后变量值将会被置成类型的默认值。例如，如果是修饰 int 类型，那么反序列后结果就是 0。
+    static 变量因为不属于任何对象(Object)，所以无论有没有 transient 关键字修饰，均不会被序列化。
+    transient使用细节——被transient关键字修饰的变量真的不能被序列化吗？ 不是； 我们知道在Java中，对象的序列化可以通过实现两种接口来实现，若实现的是Serializable接口，则所有的序列化将会自动进行，若实现的是Externalizable接口，则没有任何东西可以自动序列化，需要在writeExternal方法中进行手工指定所要序列化的变量，这与是否被transient修饰无关。因此第二个例子输出的是变量content初始化的内容，而不是null。
+    跟SQL不一样，在Java中null==null将返回true。
 ## 集合
 
 集合分为两大块：
