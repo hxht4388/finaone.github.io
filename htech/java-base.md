@@ -55,7 +55,7 @@
     EnumSet在内部以位向量的形式存储，这种存储形式非常紧凑、高效,因此EnumSet对象占用内存很小，而且运行效率很好。尤其是进行批量操作（如调用containsAll()和retainAll()方法）时，如果其参数也是EnumSet集合，则该批量操作的执行速度也非常快。
     EnumSet的集合元素也是有序的，EnumSet以枚举值在Enum类内的定义顺序来决定集合元素的顺序。
     加入null元素时会NPE
-    
+
     EnumSet allOf(Class elementType): 创建一个包含指定枚举类里所有枚举值的EnumSet集合。
     EnumSet complementOf(EnumSet e): 创建一个其元素类型与指定EnumSet里元素类型相同的EnumSet集合，新EnumSet集合包含原EnumSet集合所不包含的、此类枚举类剩下的枚举值（即新EnumSet集合和原EnumSet集合的集合元素加起来是该枚举类的所有枚举值）。
     EnumSet copyOf(Collection c): 使用一个普通集合来创建EnumSet集合。
@@ -74,7 +74,19 @@ java.util.concurrent下的线程安全集合。
 
 
 ### List
+#### ArrayList
+    DEFAULTCAPACITY_EMPTY_ELEMENTDATA EMPTY_ELEMENTDATA
+    用来区分是调用无参构造还是使用空数组构造
 
+    ArrayList(Collection<? extends E> c) -->
+    Arrays.copyOf(U[] original,int newLength, Class<? extends T[]> newType) -->
+    public static native void arraycopy(Object src,  int  srcPos,Object dest, int destPos,int length); 底层调用native方法
+
+    trimToSize()修改这个ArrayList实例的容量是列表的当前大小。 应用程序可以使用此操作来最小化ArrayList实例的存储。
+
+    ArrayList中的elementData为transient，序列化使用writeObject方法
+
+    ensureCapacity() 在插入大量元素之前调用此方法确保分配足够的空间
 ArrayList与LinkedList的实现和区别
 
 
