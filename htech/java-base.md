@@ -90,6 +90,12 @@ java.util.concurrent下的线程安全集合。
 
     ArrayList实现randomAccess标记为可随机存取的，调用二分查找时会判断是否实现了该接口而调用不同的方法
 
+    本地的JVM在调用ensureCapacity时填充Integer.MAX_VALUE会OOM Requested array size exceeds VM limit
+    存放Integer.MAX_VALUE>>1时，OOM Java heap space
+    本机能创建[Integer.MAX_VALUE>>3,Integer.MAX_VALUE>>2)之间的
+
+    int newCapacity = oldCapacity + (oldCapacity >> 1),所以 ArrayList 每次扩容之后容量都会变为原来的 1.5 倍左右（oldCapacity 为偶数就是 1.5 倍，否则是 1.5 倍左右）(也有可能不是，ensureCapacity直接扩容)
+
 ArrayList与LinkedList的实现和区别
     1.底层数据结构，ArrayList实现采用Object[]数组，LinkedList底层采用双向链表(1.6时为双向循环链表，1.7取消循环)
     2.插入和删除是否受元素位置的影响： ① ArrayList 采用数组存储，所以插入和删除元素的时间复杂度受元素位置的影响。 比如：执行add(E e)方法的时候， ArrayList 会默认在将指定的元素追加到此列表的末尾，这种情况时间复杂度就是 O(1)。但是如果要在指定位置 i 插入和删除元素的话（add(int index, E element)）时间复杂度就为 O(n-i)。因为在进行上述操作的时候集合中第 i 和第 i 个元素之后的(n-i)个元素都要执行向后位/向前移一位的操作。 ② LinkedList 采用链表存储，所以对于add(E e)方法的插入，删除元素时间复杂度不受元素位置的影响，近似 O(1)，如果是要在指定位置i插入和删除元素的话（(add(int index, E element)） 时间复杂度近似为o(n))因为需要先移动到指定位置再插入。
